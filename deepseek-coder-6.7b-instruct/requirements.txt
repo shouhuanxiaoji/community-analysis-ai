@@ -2,3 +2,4 @@ fastapi
 transformers
 uvicorn
 torch
+accelerate
