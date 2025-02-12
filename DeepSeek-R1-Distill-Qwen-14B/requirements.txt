@@ -1,0 +1,6 @@
+fastapi
+transformers
+uvicorn
+torch==2.5.1
+accelerate
+bitsandbytes
