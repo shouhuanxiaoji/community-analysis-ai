@@ -1,6 +1,4 @@
 fastapi
-transformers
+llama-cpp-python
 uvicorn
-torch==2.5.1
 accelerate
-bitsandbytes
