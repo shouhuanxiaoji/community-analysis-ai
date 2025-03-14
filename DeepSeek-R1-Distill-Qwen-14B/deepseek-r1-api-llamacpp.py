@@ -25,8 +25,15 @@ def init_model():
     llm = Llama.from_pretrained(
         repo_id="lmstudio-community/DeepSeek-Coder-V2-Lite-Instruct-GGUF",
         filename="DeepSeek-Coder-V2-Lite-Instruct-Q6_K.gguf",
-        n_ctx=8192,
-        cache_dir=here_dir
+        n_ctx=40960,
+        cache_dir=here_dir,
+        temperature=0.0,
+        top_p=1.0,
+        top_k=1,
+        repeat_penalty=1.0,
+        seed=42,
+        logits_all=True,
+        verbose=False        
     )
     return llm
 
@@ -41,10 +48,11 @@ async def create_item(request: Request):
         json_post_raw = await request.json()
         prompt = json_post_raw.get('prompt')
         max_length = json_post_raw.get('max_input', 81920)
-        max_tokens = json_post_raw.get('max_tokens', 81920)
-        top_p = json_post_raw.get('top_p', 0.01)
+        max_tokens = json_post_raw.get('max_tokens', 512)
+        top_p = json_post_raw.get('top_p', 1.0)
         top_k = json_post_raw.get('top_k', 1)
-        temperature = json_post_raw.get('temperature', 0.1)
+        temperature = json_post_raw.get('temperature', 0.0)
+        
 
         # 直接使用当前提示进行推理，不包含历史信息
         output = model.create_chat_completion(
@@ -58,8 +66,9 @@ async def create_item(request: Request):
         answer = {
             "response": response,
             "status": 200,
-            "time": time
+            "time": time,
         }
+        # 记录审计日志
         log = f"[{time}] \"prompt\":\"{prompt}\", \"response\":\"{repr(response)}\""
         print(log)
         return answer
